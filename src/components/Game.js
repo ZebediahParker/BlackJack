@@ -10,13 +10,14 @@ const styles = {
 };
 
 class Game extends Component {
-  render() {
-    return (
-      <div style={ styles.root }>
 
-      </div>
-    );
-  }
+    render() {
+        return (
+            <div style={ styles.root }>
+
+            </div>
+        );
+    }
 }
 
 export default Game;
