@@ -7,7 +7,7 @@ const background = '/images/background.jpg';
 
 const styles = {
     root: {
-        height: '100%',
+        height: '100vh',
         backgroundImage: `url(${ background })`,
         backgroundSize: 'cover',
     },
