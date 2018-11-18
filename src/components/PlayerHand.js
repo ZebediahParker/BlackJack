@@ -20,7 +20,7 @@ class PlayerHand extends Component {
             <div >
                 { 
                     this.props.hand.map(function(card) {
-                        return <Card src={ card.src } rank={ card.rank } suit={ card.suit } />;
+                        return <Card src={ card.src } rank={ card.rank } suit={ card.suit } hide={ false } />;
                     })
                 }
             </div>

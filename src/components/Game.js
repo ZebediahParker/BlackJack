@@ -96,7 +96,6 @@ class Game extends Component {
         this.setState({ dealerTotal: 0 });
         this.setState({ dealerHand: [] });
         this.setState({ round: this.state.round + 1 });
-        this.startGame();
     }
 
     isBust = (player) => {
