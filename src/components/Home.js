@@ -2,20 +2,21 @@ import React, { Component } from 'react';
 import { Button, Typography } from '@material-ui/core';
 import { withStyles } from '@material-ui/core/styles';
 
-const styles = theme => ({
+const styles = {
     root: {
         display: 'flex',
         height: '100vh',
         justifyContent: 'center',
         alignItems: 'center',
+        alignText: 'center',
     },
 
     menuItem: {
         display: 'block',
+        width: '100%',
         align: 'center',
-        margin: theme.spacing.unit,
     }
-});
+}
 
 class Home extends Component {
 

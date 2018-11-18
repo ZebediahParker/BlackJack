@@ -1,26 +1,26 @@
 import React, { Component } from 'react';
+import { withStyles } from '@material-ui/core/styles';
+import Card from './Card';
 
 const styles = {
     root: {
         display: 'inline',
     },
     card: {
-        width: '10%',
+        width: '50%',
     }
 }
 
 class PlayerHand extends Component {
 
     render() {
+        const { classes } = this.props;
+
         return (
-            <div>
+            <div >
                 { 
-                    this.props.hand.map(function(card, i) {
-                        return (
-                            <div style = { styles.root } key={ i }>
-                                <img style = { styles.card } src={ card.src } alt={ card.rank + " of " + card.suit }/>
-                            </div>
-                        )
+                    this.props.hand.map(function(card) {
+                        return <Card src={ card.src } rank={ card.rank } suit={ card.suit } />;
                     })
                 }
             </div>
@@ -28,4 +28,4 @@ class PlayerHand extends Component {
     }
 }
 
-export default PlayerHand;
+export default withStyles(styles)(PlayerHand);

@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
-import { Button, Modal, Typography } from '@material-ui/core';
+import { Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle } from '@material-ui/core';
+import { withStyles } from '@material-ui/core/styles';
 import DealerHand from './DealerHand';
 import PlayerHand from './PlayerHand';
 import Deck from '../data/Deck';
@@ -10,16 +11,17 @@ const styles = {
         height: '100vh',
         backgroundImage: `url(${ background })`,
         backgroundSize: 'cover',
+        
     },
 }
 
 class Game extends Component {
     
     state = {
-        gameState: 'Not Started',
+        open: true,
+        gameMessage: 'Black Jack',
         round: 0,
         deck: Deck,
-        cardBacks: "Simple Suits",
         playerHand: [],
         dealerHand: [],
         playerTotal: 0,
@@ -82,9 +84,19 @@ class Game extends Component {
     }
 
     startGame = () => {
-        console.log(this.state);
+        this.toggleOpen();
         this.dealCards(2, 'both');
         this.setState({ gameState: 'Ongoing' });
+    }
+
+    resetGame = () => {
+        this.setState({ deck: Deck });
+        this.setState({ playerTotal: 0 });
+        this.setState({ playerHand: [] });
+        this.setState({ dealerTotal: 0 });
+        this.setState({ dealerHand: [] });
+        this.setState({ round: this.state.round + 1 });
+        this.startGame();
     }
 
     isBust = (player) => {
@@ -152,70 +164,53 @@ class Game extends Component {
         }
 
         if(this.isBust('player')) {
-            this.setState({ gameState: 'Dealer won' });
+            this.setState({ gameMessage: 'You lost!' });
+            this.toggleOpen();
         }
 
         else if(this.isBust('dealer')) {
-            this.setState({ gameState: 'Player won' })
+            this.setState({ gameMessage: 'You won!' });
+            this.toggleOpen();
         }
 
         this.setState({ round: this.state.round + 1 })
     }
 
-    getButtons = () => {
-        switch(this.state.gameState) {
-            case 'Not Started':
-                return (
-                    <Modal aria-labelledby="simple-modal-title" aria-describedby="simple-modal-description" open={ true }>
-                        <Button variant='contained' onClick={ () => this.startGame() }>Start Game</Button>
-                    </Modal>
-                );
-
-            case 'Ongoing':
-                return (
-                    <div>
-                        <Button variant='contained' onClick={ () => this.dealCards(1, 'dealer') }>Hit Dealer</Button>
-                        <Button variant='contained' onClick={ () => this.dealCards(1, 'player') }>Hit Me</Button>
-                    </div>
-                );
-
-            case 'Player won':
-                return (
-                    <Modal aria-labelledby="simple-modal-title" aria-describedby="simple-modal-description" open={ true }>
-                        <Typography variant="h6" id="modal-title">
-                            You won! Do you want to play again?
-                            <Button variant='contained' onClick={ () => this.startGame() }>Start Game</Button>
-                        </Typography>
-                    </Modal>
-                );
-                    
-            case 'Dealer won':
-                return (
-                    <Modal aria-labelledby="simple-modal-title" aria-describedby="simple-modal-description" open={ true }>
-                        <Typography variant="h6" id="modal-title">
-                            You lost! Do you want to play again?
-                            <Button variant='contained' onClick={ () => this.startGame() }>Start Game</Button>
-                        </Typography>
-                    </Modal>
-                );
-            default:
-                return (
-                    <Modal aria-labelledby="simple-modal-title" aria-describedby="simple-modal-description" open={ true }>
-                        <Button variant='contained' onClick={ () => this.startGame() }>Start Game</Button>
-                    </Modal>
-                );
-        }
+    toggleOpen = () => {
+        this.setState({ open: !this.state.open });
     }
 
     render() {
+        const { classes } = this.props;
+
         return (
-            <div style={ styles.root }>
-                <DealerHand back={ this.state.cardBacks } hand={ this.state.dealerHand } />
-                <PlayerHand back={ this.state.cardBacks } hand={ this.state.playerHand } />          
-                { this.getButtons() }
+            <div className={ classes.root }>
+                <Dialog open={ this.state.open } disableBackdropClick={ true } onClose={ () => this.toggleOpen() } aria-labelledby="alert-dialog-slide-title" aria-describedby="alert-dialog-slide-description">
+                    <DialogTitle>
+                        { this.state.gameMessage }
+                    </DialogTitle>
+                    <DialogContent>
+                        <DialogContentText>
+                           Do you want to start the game?
+                        </DialogContentText>
+                    </DialogContent>
+                    <DialogActions>
+                        <Button onClick={ () => this.startGame() } color="primary">
+                            Start Game
+                        </Button>
+                    </DialogActions>
+                </Dialog>
+                <div className={ classes.content }>
+                    <div>
+                        <DealerHand className={ classes.item } back={ this.state.cardBacks } hand={ this.state.dealerHand } />
+                        <PlayerHand className={ classes.item } back={ this.state.cardBacks } hand={ this.state.playerHand } />          
+                        <Button className={ classes.item } variant='contained' onClick={ () => this.dealCards(1, 'dealer') }>Hit Dealer</Button>
+                        <Button className={ classes.item } variant='contained' onClick={ () => this.dealCards(1, 'player') }>Hit Me</Button>
+                    </div>
+                </div>
             </div>
         );
     }
 }
 
-export default Game;
+export default withStyles(styles)(Game);
