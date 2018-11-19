@@ -12,7 +12,7 @@ const styles = {
 
 class Card extends Component {
 
-    state ={
+    state = {
         cardBack: 'Simple Suits',
     }
 

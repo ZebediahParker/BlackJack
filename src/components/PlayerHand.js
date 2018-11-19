@@ -4,19 +4,17 @@ import Card from './Card';
 
 const styles = {
     root: {
-        display: 'inline',
+        display: 'block',
     },
-    card: {
-        width: '50%',
-    }
 }
 
 class PlayerHand extends Component {
 
     render() {
+        const { classes } = this.props;
 
         return (
-            <div >
+            <div className={ classes.root }>
                 { 
                     this.props.hand.map(function(card, i) {
                         return <Card src={ card.src } rank={ card.rank } suit={ card.suit } hide={ false } key={ i }/>;

@@ -10,7 +10,6 @@ const styles = {
         alignItems: 'center',
         alignText: 'center',
     },
-
     menuItem: {
         display: 'block',
         width: '100%',

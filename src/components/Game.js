@@ -1,18 +1,24 @@
 import React, { Component } from 'react';
-import { Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle } from '@material-ui/core';
 import { withStyles } from '@material-ui/core/styles';
 import DealerHand from './DealerHand';
 import PlayerHand from './PlayerHand';
+import ActionBar from './ActionBar';
 import Deck from '../data/Deck';
 const background = '/images/background.jpg';
 
 const styles = {
     root: {
+        display: 'block',
         height: '100vh',
+        width: '85%',
         backgroundImage: `url(${ background })`,
+        backgroundRepeat: 'no-repeat',
         backgroundSize: 'cover',
-        
+        backgroundPosition: 'center',
     },
+    content: {
+        align: 'center',
+    }
 }
 
 class Game extends Component {
@@ -20,21 +26,18 @@ class Game extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            open: false,
-            gameMessage: 'Black Jack',
-            round: 1,
-            deck: Deck,
+            gameMessages: ['Game Started'],
+            deck: [].concat(Deck),
             playerHand: [],
             dealerHand: [],
-            playerTotal: 0,
-            dealerTotal: 0,
             playerHold: false,
             dealerHold: false,
+            gameOver: false,
+            cardsDealt: 0,
         }
         this.startGame();
     }
     
-
     getRandomCard = () => {
         let card;
 
@@ -96,10 +99,22 @@ class Game extends Component {
     }
 
     resetGame = () => {
+
+        this.setState({ 
+            gameMessage: ['Game Started'],
+            deck: [].concat(Deck),
+            playerHand: [],
+            dealerHand: [],
+            playerTotal: 0,
+            dealerTotal: 0,
+            playerHold: false,
+            dealerHold: false,
+        });
+
         this.props.changePage('Game');
     }
 
-    isBust = (player) => {
+    getTotal = (player) => {
         let isBust = false;
         let total = 0;
         if(player === 'player') {
@@ -136,27 +151,30 @@ class Game extends Component {
                 hiddenCard = this.getValue(this.state.dealerHand[0].rank);
             }
 
-            this.setState({ dealerTotal: total - hiddenCard })
+            return total - hiddenCard;
         }
 
         else if(player === 'player') {
-            this.setState({ playerTotal: total })
+            return total;
         }
 
-        return isBust;
+    }
+
+    isBust = (player) => {
+        return this.getTotal(player) > 21;
     }
 
     hit = () => {
         this.dealCard();
 
         if(this.isBust('player')) {
-            this.setState({ gameMessage: 'You lost!' });
-            this.handleOpen();
+            this.state.gameMessages.push('You lost!');
+            this.setState({ gameOver: true });
         }
 
         else if(this.isBust('dealer')) {
-            this.setState({ gameMessage: 'You won!' });
-            this.handleOpen();
+            this.state.gameMessages.push('You won!');
+            this.setState({ gameOver: true });
         }
     }
 
@@ -165,6 +183,9 @@ class Game extends Component {
             let card = this.getRandomCard();
             if(card) {
                 this.state.playerHand.push(card);
+                this.setState((prevState) => ({
+                    cardsDealt: prevState.cardsDealt + 1,
+                }));
             }
         }
 
@@ -172,6 +193,9 @@ class Game extends Component {
             let card = this.getRandomCard();
             if(card) {
                 this.state.dealerHand.push(card);
+                this.setState((prevState) => ({
+                    cardsDealt: prevState.cardsDealt + 1,
+                }));
             }
         }        
     }
@@ -179,47 +203,26 @@ class Game extends Component {
     hold = (player) => {
         if(player === 'player') {
             this.setState({ playerHold: true });
+            this.state.gameMessages.push('You held');
         }
 
         else if(player === 'dealer') {
             this.setState({ dealerHold: true });
+            this.state.gameMessages.push('The dealer held');
         }
-    }
-
-    handleOpen = () => {
-        this.setState({ open: true });
-    }
-
-    handleClose = () => {
-        this.setState({ open: false });
+        
     }
 
     render() {
         const { classes } = this.props;
 
         return (
-            <div className={ classes.root }>
-                <Dialog open={ this.state.open } disableBackdropClick={ true } aria-labelledby="alert-dialog-slide-title" aria-describedby="alert-dialog-slide-description">
-                    <DialogTitle>
-                        { this.state.gameMessage }
-                    </DialogTitle>
-                    <DialogContent>
-                        <DialogContentText>
-                           Do you want to start another game?
-                        </DialogContentText>
-                    </DialogContent>
-                    <DialogActions>
-                        <Button variant='contained' onClick={ () => this.resetGame() }>
-                            Deal Cards
-                        </Button>
-                    </DialogActions>
-                </Dialog>
-                <div className={ classes.content }>
-                    <div>
-                        <DealerHand className={ classes.item } back={ this.state.cardBacks } hand={ this.state.dealerHand } />
-                        <PlayerHand className={ classes.item } back={ this.state.cardBacks } hand={ this.state.playerHand } />          
-                        <Button className={ classes.item } variant='contained' onClick={ this.hit }>Hit Me</Button>
-                        <Button className={ classes.item } variant='contained' onClick={ () => this.hold('player') }>Hold</Button>
+            <div>
+                <ActionBar changePage={ this.props.changePage } hit={ this.hit } hold={ this.hold } playerTotal={ this.getTotal('player') } dealerTotal={ this.getTotal('dealer') } messages={ this.state.gameMessages } />
+                <div className={ classes.root }>
+                    <div className={ classes.content }>
+                        <DealerHand className={ classes.item } hand={ this.state.dealerHand } hideCard={ this.state.gameOver } />
+                        <PlayerHand className={ classes.item } hand={ this.state.playerHand } />          
                     </div>
                 </div>
             </div>
