@@ -20,7 +20,7 @@ class Game extends Component {
     state = {
         open: true,
         gameMessage: 'Black Jack',
-        round: 0,
+        round: 1,
         deck: Deck,
         playerHand: [],
         dealerHand: [],
@@ -86,16 +86,17 @@ class Game extends Component {
     startGame = () => {
         this.toggleOpen();
         this.dealCards(2, 'both');
-        this.setState({ gameState: 'Ongoing' });
     }
 
     resetGame = () => {
-        this.setState({ deck: Deck });
-        this.setState({ playerTotal: 0 });
-        this.setState({ playerHand: [] });
-        this.setState({ dealerTotal: 0 });
-        this.setState({ dealerHand: [] });
-        this.setState({ round: this.state.round + 1 });
+        this.setState((prevState) => ({ 
+            deck: Deck.concat(prevState.playerHand, prevState.dealerHand),
+            playerTotal: 0,
+            playerHand: [],
+            dealerTotal: 0,
+            dealerHand: [],
+            round: prevState.round + 1, 
+        }));
     }
 
     isBust = (player) => {
@@ -171,12 +172,18 @@ class Game extends Component {
             this.setState({ gameMessage: 'You won!' });
             this.toggleOpen();
         }
-
-        this.setState({ round: this.state.round + 1 })
     }
 
     toggleOpen = () => {
         this.setState({ open: !this.state.open });
+    }
+
+    getAction = () => {
+        if(this.state.round !== 1) {
+            this.resetGame();
+        }
+
+        this.startGame();
     }
 
     render() {
@@ -184,7 +191,7 @@ class Game extends Component {
 
         return (
             <div className={ classes.root }>
-                <Dialog open={ this.state.open } disableBackdropClick={ true } onClose={ () => this.toggleOpen() } aria-labelledby="alert-dialog-slide-title" aria-describedby="alert-dialog-slide-description">
+                <Dialog open={ this.state.open } disableBackdropClick={ true } onClose={ this.toggleOpen } aria-labelledby="alert-dialog-slide-title" aria-describedby="alert-dialog-slide-description">
                     <DialogTitle>
                         { this.state.gameMessage }
                     </DialogTitle>
@@ -194,8 +201,8 @@ class Game extends Component {
                         </DialogContentText>
                     </DialogContent>
                     <DialogActions>
-                        <Button onClick={ () => this.startGame() } color="primary">
-                            Start Game
+                        <Button onClick={ this.getAction } color="primary">
+                            Deal Cards
                         </Button>
                     </DialogActions>
                 </Dialog>

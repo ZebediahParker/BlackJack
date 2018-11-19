@@ -26,7 +26,7 @@ class Home extends Component {
         return (
             <div className={ classes.root }>
                 <div>
-                    <Typography className={ classes.menuItem } variant='title'>Black Jack</Typography> 
+                    <Typography className={ classes.menuItem } variant='h6'>Black Jack</Typography> 
                     <Button className={ classes.menuItem } size='large' onClick={ () => this.props.changePage('Game') }>Start Game</Button>
                     <Button className={ classes.menuItem } size='large' onClick={ () => this.props.changePage('Dashboard') }>Stats</Button>
                     <Button className={ classes.menuItem } size='large' onClick={ () => this.props.changePage('Options') }>Options</Button>

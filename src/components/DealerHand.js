@@ -14,20 +14,12 @@ const styles = {
 class DealerHand extends Component {
 
     render() {
-        const { classes } = this.props;
 
         return (
-            <div >
+            <div>
                 { 
-                    this.props.hand.map(function(card, i) {
-                        
-                        if(i === 0) {
-                            return <Card src={ card.src } rank={ card.rank } suit={ card.suit } hide={ true }/>;
-                        }
-                        
-                        else {
-                            return <Card src={ card.src } rank={ card.rank } suit={ card.suit } hide={ false }/>;
-                        }
+                    this.props.hand.map(function(card, i) {    
+                        return <Card src={ card.src } rank={ card.rank } suit={ card.suit } hide={ i === 0 } key={ i }/>;
                     })
                 }
             </div>

@@ -14,13 +14,12 @@ const styles = {
 class PlayerHand extends Component {
 
     render() {
-        const { classes } = this.props;
 
         return (
             <div >
                 { 
-                    this.props.hand.map(function(card) {
-                        return <Card src={ card.src } rank={ card.rank } suit={ card.suit } hide={ false } />;
+                    this.props.hand.map(function(card, i) {
+                        return <Card src={ card.src } rank={ card.rank } suit={ card.suit } hide={ false } key={ i }/>;
                     })
                 }
             </div>
