@@ -97,8 +97,10 @@ class Game extends Component {
     }
 
     startGame = () => {
-        this.dealCard();
-        this.dealCard();
+        this.dealCard('player');
+        this.dealCard('dealer');
+        this.dealCard('player');
+        this.dealCard('dealer');
     }
 
     resetGame = () => {
@@ -117,7 +119,23 @@ class Game extends Component {
         this.props.changePage('Game');
     }
 
-    getTotal = (player) => {
+    endGame = () => {
+        let playerTotal = this.getTotal('player');
+        let dealerTotal = this.getTotal('dealer', false);
+
+        if((playerTotal > dealerTotal && playerTotal <= 21) || dealerTotal > 21) {
+            this.state.gameMessages.push('You won!');
+        }
+        else if(playerTotal < dealerTotal || playerTotal > 21) {
+            this.state.gameMessages.push('You lost!');
+        }
+        else {
+            this.state.gameMessages.push('You tied!');
+        }
+        this.setState({ gameOver: true });
+    }
+
+    getTotal = (player, hideDealer = true) => {
         let isBust = false;
         let total = 0;
         if(player === 'player') {
@@ -137,7 +155,7 @@ class Game extends Component {
             let done = false;
             let numberOfAces = this.getNumberOfAces(player);
             
-            for(let i = 0; i < numberOfAces && !done; i++){
+            for(let i = 0; i < numberOfAces && !done; i++) {
                 total -= 10;
 
                 if(total <= 21) {
@@ -152,7 +170,7 @@ class Game extends Component {
 
             if(!isBust) {
                 let card = this.state.dealerHand[0];
-                if(card && card.rank !== 'Ace'){
+                if(card && card.rank !== 'Ace' && hideDealer && !this.state.gameOver) {
                     hiddenCard = this.getValue(card.rank);
                 }
             }
@@ -170,22 +188,26 @@ class Game extends Component {
         return this.getTotal(player) > 21;
     }
 
-    hit = () => {
-        this.dealCard();
-
-        if(this.isBust('player')) {
-            this.state.gameMessages.push('You lost!');
-            this.setState({ gameOver: true });
+    hit = (player) => {
+        this.dealCard(player);
+        let wasBust = this.isBust(player);
+        if(wasBust) {
+            if(player === 'player') {
+                this.state.gameMessages.push('You went bust');
+                this.state.gameMessages.push('You lost!');
+                this.setState({ gameOver: true });
+            }
+    
+            else if(player === 'dealer') {
+                this.state.gameMessages.push('Dealer went bust');
+                this.setState({ gameOver: true });
+            }
         }
-
-        else if(this.isBust('dealer')) {
-            this.state.gameMessages.push('You won!');
-            this.setState({ gameOver: true });
-        }
+        return wasBust;
     }
 
-    dealCard = () => {
-        if(!this.state.playerHold) {
+    dealCard = (player) => {
+        if(player === 'player' && !this.state.playerHold) {
             let card = this.getRandomCard();
             if(card) {
                 this.state.playerHand.push(card);
@@ -195,7 +217,7 @@ class Game extends Component {
             }
         }
 
-        if(!this.state.dealerHold) {
+        else if(player === 'dealer' && !this.state.dealerHold) {
             let card = this.getRandomCard();
             if(card) {
                 this.state.dealerHand.push(card);
@@ -210,13 +232,29 @@ class Game extends Component {
         if(player === 'player') {
             this.setState({ playerHold: true });
             this.state.gameMessages.push('You held');
+            this.dealersTurn();
         }
-
         else if(player === 'dealer') {
             this.setState({ dealerHold: true });
             this.state.gameMessages.push('The dealer held');
+            this.setState({ gameOver: true });
         }
         
+    }
+
+    dealersTurn = () => {
+        let done = false;
+
+        while(!done) {
+            if(this.getTotal('dealer', false) >= 17) {
+                this.hold('dealer');
+                done = true;
+            }
+            else {
+                done = this.hit('dealer');
+            }
+        }
+        this.endGame();
     }
 
     render() {

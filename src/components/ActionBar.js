@@ -22,7 +22,7 @@ class ActionBar extends Component {
       <Paper className={ classes.root }>
         <Drawer className={ classes.drawer } variant='permanent' anchor='right'>
           <List>
-            <ListItem button onClick={ () => this.props.hit() }>
+            <ListItem button onClick={ () => this.props.hit('player') }>
               <ListItemText>Deal Card</ListItemText>
             </ListItem>
             <ListItem button onClick={ () => this.props.hold('player') }>
