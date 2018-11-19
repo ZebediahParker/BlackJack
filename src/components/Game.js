@@ -17,16 +17,23 @@ const styles = {
 
 class Game extends Component {
     
-    state = {
-        open: true,
-        gameMessage: 'Black Jack',
-        round: 1,
-        deck: Deck,
-        playerHand: [],
-        dealerHand: [],
-        playerTotal: 0,
-        dealerTotal: 0,
+    constructor(props) {
+        super(props);
+        this.state = {
+            open: false,
+            gameMessage: 'Black Jack',
+            round: 1,
+            deck: Deck,
+            playerHand: [],
+            dealerHand: [],
+            playerTotal: 0,
+            dealerTotal: 0,
+            playerHold: false,
+            dealerHold: false,
+        }
+        this.startGame();
     }
+    
 
     getRandomCard = () => {
         let card;
@@ -84,19 +91,12 @@ class Game extends Component {
     }
 
     startGame = () => {
-        this.toggleOpen();
-        this.dealCards(2, 'both');
+        this.dealCard();
+        this.dealCard();
     }
 
     resetGame = () => {
-        this.setState((prevState) => ({ 
-            deck: Deck.concat(prevState.playerHand, prevState.dealerHand),
-            playerTotal: 0,
-            playerHand: [],
-            dealerTotal: 0,
-            dealerHand: [],
-            round: prevState.round + 1, 
-        }));
+        this.props.changePage('Game');
     }
 
     isBust = (player) => {
@@ -146,44 +146,52 @@ class Game extends Component {
         return isBust;
     }
 
-    dealCards = (cards, player) => {
-        for(let i = 0; i < cards; i++) {
-            if(player === 'player' || player === 'both') {
-                let card = this.getRandomCard();
-                if(card) {
-                    this.state.playerHand.push(card);
-                }
-            }
-
-            if(player === 'dealer' || player === 'both') {
-                let card = this.getRandomCard();
-                if(card) {
-                    this.state.dealerHand.push(card);
-                }
-            }
-        }
+    hit = () => {
+        this.dealCard();
 
         if(this.isBust('player')) {
             this.setState({ gameMessage: 'You lost!' });
-            this.toggleOpen();
+            this.handleOpen();
         }
 
         else if(this.isBust('dealer')) {
             this.setState({ gameMessage: 'You won!' });
-            this.toggleOpen();
+            this.handleOpen();
         }
     }
 
-    toggleOpen = () => {
-        this.setState({ open: !this.state.open });
-    }
-
-    getAction = () => {
-        if(this.state.round !== 1) {
-            this.resetGame();
+    dealCard = () => {
+        if(!this.state.playerHold) {
+            let card = this.getRandomCard();
+            if(card) {
+                this.state.playerHand.push(card);
+            }
         }
 
-        this.startGame();
+        if(!this.state.dealerHold) {
+            let card = this.getRandomCard();
+            if(card) {
+                this.state.dealerHand.push(card);
+            }
+        }        
+    }
+
+    hold = (player) => {
+        if(player === 'player') {
+            this.setState({ playerHold: true });
+        }
+
+        else if(player === 'dealer') {
+            this.setState({ dealerHold: true });
+        }
+    }
+
+    handleOpen = () => {
+        this.setState({ open: true });
+    }
+
+    handleClose = () => {
+        this.setState({ open: false });
     }
 
     render() {
@@ -191,17 +199,17 @@ class Game extends Component {
 
         return (
             <div className={ classes.root }>
-                <Dialog open={ this.state.open } disableBackdropClick={ true } onClose={ this.toggleOpen } aria-labelledby="alert-dialog-slide-title" aria-describedby="alert-dialog-slide-description">
+                <Dialog open={ this.state.open } disableBackdropClick={ true } aria-labelledby="alert-dialog-slide-title" aria-describedby="alert-dialog-slide-description">
                     <DialogTitle>
                         { this.state.gameMessage }
                     </DialogTitle>
                     <DialogContent>
                         <DialogContentText>
-                           Do you want to start the game?
+                           Do you want to start another game?
                         </DialogContentText>
                     </DialogContent>
                     <DialogActions>
-                        <Button onClick={ this.getAction } color="primary">
+                        <Button variant='contained' onClick={ () => this.resetGame() }>
                             Deal Cards
                         </Button>
                     </DialogActions>
@@ -210,8 +218,8 @@ class Game extends Component {
                     <div>
                         <DealerHand className={ classes.item } back={ this.state.cardBacks } hand={ this.state.dealerHand } />
                         <PlayerHand className={ classes.item } back={ this.state.cardBacks } hand={ this.state.playerHand } />          
-                        <Button className={ classes.item } variant='contained' onClick={ () => this.dealCards(1, 'dealer') }>Hit Dealer</Button>
-                        <Button className={ classes.item } variant='contained' onClick={ () => this.dealCards(1, 'player') }>Hit Me</Button>
+                        <Button className={ classes.item } variant='contained' onClick={ this.hit }>Hit Me</Button>
+                        <Button className={ classes.item } variant='contained' onClick={ () => this.hold('player') }>Hold</Button>
                     </div>
                 </div>
             </div>

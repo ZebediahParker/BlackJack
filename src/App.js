@@ -7,32 +7,29 @@ import './App.css';
 class App extends Component {
 
   state = {
-    page: "Home",
+    page: () => <Home changePage={ this.setPage } />,
   }
 
   setPage = (newPage) => {
-    if(newPage !== this.state.page) {
-      this.setState({ page: newPage });
-    }
-  }
-
-  getPage = () => {
-    switch(this.state.page) {
-      case 'Home':
-        return <Home changePage={ this.setPage } />;
+    switch(newPage) {
       case "Game":
-        return <Game changePage={ this.setPage } />;
+        this.setState({ page: () => <Game changePage={ this.setPage } /> });
+        break;
       case "Dashboard":
-        return <Dashboard />;
+        this.setState({ page: () => <Dashboard changePage={ this.setPage } /> });
+        break;
       default:
-        return <Home changePage={ this.setPage } />;
+        this.setState({ page: () => <Home changePage={ this.setPage } /> });
+        break;
     }
   }
 
   render() {
+    const CurrentPage = this.state.page;
+
     return (
       <div >
-        { this.getPage() }
+        <CurrentPage />
       </div>
     );
   }
