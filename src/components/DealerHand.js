@@ -11,12 +11,14 @@ const styles = {
 class DealerHand extends Component {
     render() {
         const { classes } = this.props;
+        const hideCard = !this.props.hideCard;
 
         return (
             <div className={ classes.root }>
-                { 
+                {   
                     this.props.hand.map(function(card, i) {   
-                        return <Card src={ card.src } rank={ card.rank } suit={ card.suit } hide={ i === 0 } key={ i }/>;
+                        console.log(hideCard);
+                        return <Card src={ card.src } rank={ card.rank } suit={ card.suit } hide={ i === 0 && hideCard } key={ i }/>;
                     })
                 }
             </div>

@@ -35,6 +35,9 @@ class Game extends Component {
             gameOver: false,
             cardsDealt: 0,
         }
+    }
+
+    componentDidMount(){
         this.startGame();
     }
     
@@ -148,7 +151,10 @@ class Game extends Component {
             let hiddenCard = 0;
 
             if(!isBust) {
-                hiddenCard = this.getValue(this.state.dealerHand[0].rank);
+                let card = this.state.dealerHand[0];
+                if(card && card.rank !== 'Ace'){
+                    hiddenCard = this.getValue(card.rank);
+                }
             }
 
             return total - hiddenCard;

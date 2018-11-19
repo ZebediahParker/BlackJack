@@ -44,8 +44,8 @@ class ActionBar extends Component {
           <Divider />
           <List>
             { 
-              this.props.messages.map((message) => (
-                <ListItem key={ message }>
+              this.props.messages.map((message, index) => (
+                <ListItem key={ message + index }>
                   <ListItemText primary={ message } />
                 </ListItem>
               )) 
