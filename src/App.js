@@ -21,18 +21,14 @@ class App extends Component {
   setPage = (newPage) => {
     switch(newPage) {
       case "Game":
-        this.setState({ page: () => <Game changePage={ this.setPage } gameStats={ this.state.stats } changeStats={ this.changeStats }/> });
+        this.setState({ page: () => <Game changePage={ this.setPage } gameStats={ this.state.stats }/> });
         break;
       default:
         this.setState({ page: () => <Home changePage={ this.setPage } /> });
         break;
     }
   }
-
-  changeStats = (newStats) => {
-    this.setState({ stats: newStats });
-  }
-
+  
   render() {
     const CurrentPage = this.state.page;
 

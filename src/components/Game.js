@@ -4,20 +4,25 @@ import DealerHand from './DealerHand';
 import PlayerHand from './PlayerHand';
 import ActionBar from './ActionBar';
 import Deck from '../data/Deck';
-const background = '/images/background.jpg';
+import { Typography } from '@material-ui/core';
 
 const styles = {
     root: {
-        display: 'block',
+        display: 'flex',
         height: '100vh',
-        width: '85%',
-        backgroundImage: `url(${ background })`,
-        backgroundRepeat: 'no-repeat',
-        backgroundSize: 'cover',
-        backgroundPosition: 'center',
+        width: '100%',
+        backgroundColor: '#01a51a',
+        justifyContent: 'center',
     },
-    content: {
-        align: 'center',
+    dealer: {
+        position: 'absolute',
+        top: '0',
+        width: '100%',
+    },
+    player: {
+        position: 'absolute',
+        bottom: '0',
+        width: '100%',
     }
 }
 
@@ -137,36 +142,48 @@ class Game extends Component {
             this.props.gameStats.ties += 1;
             
         }
+        this.setState({ playerHold: true });
         this.setState({ gameOver: true });
     }
 
     checkForBlackJack = () => {
         if(this.getTotal('player') === 21 && this.hasBlackJack('player')) {
             this.props.gameStats.playerBlackJacks += 1;
+            this.endGame();
         }
         else if(this.getTotal('dealer') === 21 && this.hasBlackJack('dealer')) {
             this.props.gameStats.dealerBlackJacks += 1;
+            this.endGame();
         }
     }
 
     hasBlackJack = (player) => {
-        let hadJack = false;
-
+        let blackJack = false;
         if(player === 'player') {
             this.state.playerHand.forEach(card => {
-                if((card.rank === 'Jack' && (card.suit === 'Clubs' || card.suit === 'Spades')) || card.rank === 'Ace') {
-                    hadJack = true;
+                if((card.rank === 'Jack' && (card.suit === 'Clubs' || card.suit === 'Spades'))) {
+                    blackJack = true;
+                    this.state.gameMessages.push('You had a Black Jack!');
+                }
+                else if(card.rank === 'Ace') {
+                    blackJack = true;
+                    this.state.gameMessages.push('You had a Natural!');
                 }
             });
         }
         else if(player === 'dealer') {
             this.state.dealerHand.forEach(card => {
-                if((card.rank === 'Jack' && (card.suit === 'Clubs' || card.suit === 'Spades')) || card.rank === 'Ace')  {
-                    hadJack = true;
+                if((card.rank === 'Jack' && (card.suit === 'Clubs' || card.suit === 'Spades')))  {
+                    blackJack = true;
+                    this.state.gameMessages.push('The dealer had a Black Jack!');
+                }
+                else if(card.rank === 'Ace') {
+                    blackJack = true;
+                    this.state.gameMessages.push('The dealer had a Natural!');
                 }
             });
         }
-        return hadJack;
+        return blackJack;
     }
 
     getTotal = (player, hideDealer = true) => {
@@ -227,14 +244,14 @@ class Game extends Component {
         let wasBust = this.isBust(player);
         if(wasBust) {
             if(player === 'player') {
-                this.state.gameMessages.push('You went bust');
+                this.state.gameMessages.push('You busted');
                 this.state.gameMessages.push('You lost!');
                 this.props.gameStats.playerBusts += 1;
                 this.props.gameStats.dealerWins += 1;
             }
     
             else if(player === 'dealer') {
-                this.state.gameMessages.push('Dealer went bust');
+                this.state.gameMessages.push('The dealer busted');
                 this.props.gameStats.dealerBusts += 1;   
             }
             this.setState({ playerHold: true });
@@ -298,14 +315,16 @@ class Game extends Component {
         const { classes } = this.props;
 
         return (
-            <div>
+            <div className={ classes.root }>
                 <ActionBar changePage={ this.props.changePage } hit={ this.hit } hold={ this.hold } playerHeld={ this.state.playerHold } stats={ this.props.gameStats } playerTotal={ this.getTotal('player') } dealerTotal={ this.getTotal('dealer') } messages={ this.state.gameMessages } />
-                <div className={ classes.root }>
-                    <div className={ classes.content }>
-                        <DealerHand className={ classes.item } hand={ this.state.dealerHand } hideCard={ this.state.gameOver } />
-                        <PlayerHand className={ classes.item } hand={ this.state.playerHand } />          
-                    </div>
+                <div className={ classes.dealer }>
+                    <Typography variant='h4'>Dealer's Hand</Typography>
+                    <DealerHand hand={ this.state.dealerHand } hideCard={ this.state.gameOver } />
                 </div>
+                <div className={ classes.player }>
+                    <Typography variant='h4'>Player's Hand</Typography>
+                    <PlayerHand hand={ this.state.playerHand } />          
+                </div>                
             </div>
         );
     }

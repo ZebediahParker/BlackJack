@@ -1,20 +1,18 @@
 import React, { Component } from 'react';
 import { withStyles } from '@material-ui/core/styles';
-import { Drawer, Divider, ExpansionPanel, ExpansionPanelSummary, ExpansionPanelDetails, List, ListItem, ListItemText, Paper, Typography } from '@material-ui/core';
+import { Drawer, Divider, ExpansionPanel, ExpansionPanelSummary, ExpansionPanelDetails, List, ListItem, ListItemText, Typography } from '@material-ui/core';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 
 const styles = {
-  root: {
-    display: 'block',
-    width: '20%',
-  },
   drawer: {
     display: 'block',
-    width: '100%',
   },
   title: {
     marginLeft: '20px',
-    marginTop: '20px',
+    marginTop: '10px',
+  },
+  name: {
+    marginLeft: '-20px',
   },
   action: {
     borderWidth: 0.5,
@@ -27,34 +25,39 @@ class ActionBar extends Component {
     const { classes } = this.props;
 
     return (
-      <Paper className={ classes.root }>
         <Drawer className={ classes.drawer } variant='permanent' anchor='right'>
           <ExpansionPanel>
-            <ExpansionPanelSummary expandIcon={<ExpandMoreIcon />}>
+            <ExpansionPanelSummary expandIcon={ <ExpandMoreIcon /> }>
               <Typography variant='h6'>Game Stats</Typography>
             </ExpansionPanelSummary>
             <ExpansionPanelDetails>
               <List>
                 <ListItem>
-                  <ListItemText>Player Wins: { this.props.stats.playerWins }</ListItemText>
+                  <ListItemText className={ classes.name }>Player</ListItemText>
                 </ListItem>
                 <ListItem>
-                  <ListItemText>Dealer Wins: { this.props.stats.dealerWins }</ListItemText>
+                  <ListItemText>Wins: { this.props.stats.playerWins }</ListItemText>
                 </ListItem>
                 <ListItem>
-                  <ListItemText>Ties: { this.props.stats.ties }</ListItemText>
+                  <ListItemText>Busts: { this.props.stats.playerBusts }</ListItemText>
                 </ListItem>
                 <ListItem>
-                  <ListItemText>Player Busts: { this.props.stats.playerBusts }</ListItemText>
+                  <ListItemText>Black Jacks: { this.props.stats.playerBlackJacks }</ListItemText>
                 </ListItem>
                 <ListItem>
-                  <ListItemText>Dealer Busts: { this.props.stats.dealerBusts }</ListItemText>
+                  <ListItemText className={ classes.name }>Dealer</ListItemText>
                 </ListItem>
                 <ListItem>
-                  <ListItemText>Player BlackJacks: { this.props.stats.playerBlackJacks }</ListItemText>
+                  <ListItemText>Wins: { this.props.stats.dealerWins }</ListItemText>
                 </ListItem>
                 <ListItem>
-                  <ListItemText>Dealer BlackJacks: { this.props.stats.dealerBlackJacks }</ListItemText>
+                  <ListItemText>Busts: { this.props.stats.dealerBusts }</ListItemText>
+                </ListItem>
+                <ListItem>
+                  <ListItemText>Black Jacks: { this.props.stats.dealerBlackJacks }</ListItemText>
+                </ListItem>
+                <ListItem>
+                  <ListItemText className={ classes.name }>Ties: { this.props.stats.ties }</ListItemText>
                 </ListItem>
               </List>
             </ExpansionPanelDetails>
@@ -63,10 +66,10 @@ class ActionBar extends Component {
           <Typography className={ classes.title } variant='h6'>Current Totals</Typography>
           <List>
             <ListItem>
-              <ListItemText>Player: { this.props.playerTotal }</ListItemText>
+              <ListItemText>Dealer: { this.props.dealerTotal }</ListItemText>
             </ListItem>
             <ListItem>
-              <ListItemText>Dealer: { this.props.dealerTotal }</ListItemText>
+              <ListItemText>Player: { this.props.playerTotal }</ListItemText>
             </ListItem>
           </List>
           <Divider />
@@ -92,10 +95,8 @@ class ActionBar extends Component {
                 </ListItem>
               )) 
             }
-          </List>
-          
+          </List>     
         </Drawer>
-      </Paper>   
     );
   }
 }

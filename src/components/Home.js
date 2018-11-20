@@ -1,11 +1,16 @@
 import React, { Component } from 'react';
 import { Button, Typography } from '@material-ui/core';
 import { withStyles } from '@material-ui/core/styles';
+const background = './images/Home_Background.png';
 
 const styles = {
     root: {
         display: 'flex',
         height: '100vh',
+        backgroundImage: `url(${ background })`,
+        backgroundPosition: 'center',
+        backgroundSize: 'contain',
+        backgroundRepeat: 'no-repeat',
         justifyContent: 'center',
         alignItems: 'center',
         alignText: 'center',
@@ -25,8 +30,8 @@ class Home extends Component {
         return (
             <div className={ classes.root }>
                 <div>
-                    <Typography className={ classes.menuItem } variant='h6'>Black Jack</Typography> 
-                    <Button className={ classes.menuItem } size='large' onClick={ () => this.props.changePage('Game') }>Start Game</Button>
+                    <Typography className={ classes.menuItem } variant='h3' align='center'>Black Jack</Typography> 
+                    <Button className={ classes.menuItem } size='large' variant='outlined' onClick={ () => this.props.changePage('Game') }>Start Game</Button>
                 </div>
             </div>
         );
