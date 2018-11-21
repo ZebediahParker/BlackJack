@@ -1,8 +1,21 @@
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
+<h4>Getting Started</h4>
+
+<ol>
+    <li>Download Node.js(The current LTS version)</li>
+    <li>Navigate the the root folder of this project</li>
+    <li>Run 'npm install' via the console to download all the dependencies</li>
+    <li>Run 'npm start' via the console to start the app</li>
+</ol>
+
 ## Available Scripts
 
 In the project directory, you can run:
+
+### `npm install`
+
+Installs all of the dependencies in the package.json file.<br>
 
 ### `npm start`
 

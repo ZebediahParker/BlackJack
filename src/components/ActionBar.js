@@ -1,104 +1,38 @@
 import React, { Component } from 'react';
+import { Button } from '@material-ui/core';
 import { withStyles } from '@material-ui/core/styles';
-import { Drawer, Divider, ExpansionPanel, ExpansionPanelSummary, ExpansionPanelDetails, List, ListItem, ListItemText, Typography } from '@material-ui/core';
-import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 
 const styles = {
-  drawer: {
-    display: 'block',
-  },
-  title: {
-    marginLeft: '20px',
-    marginTop: '10px',
-  },
-  name: {
-    marginLeft: '-20px',
-  },
-  action: {
-    borderWidth: 0.5,
-  }
+      root: {
+        width: '90%',
+        position: 'absolute',
+        left: '10%',
+        bottom: 5,
+        justifyContent:'center',
+      },
+      button: {
+        width: '15%',
+        margin: 2,
+      }
 }
-
 class ActionBar extends Component {
 
+  /** 
+   * Displays actions that the player may take, 
+   * Deal Card and Hold are disabled if the player 
+   * has held or game is over 
+   */
   render() {
     const { classes } = this.props;
-
     return (
-        <Drawer className={ classes.drawer } variant='permanent' anchor='right'>
-          <ExpansionPanel>
-            <ExpansionPanelSummary expandIcon={ <ExpandMoreIcon /> }>
-              <Typography variant='h6'>Game Stats</Typography>
-            </ExpansionPanelSummary>
-            <ExpansionPanelDetails>
-              <List>
-                <ListItem>
-                  <ListItemText className={ classes.name }>Player</ListItemText>
-                </ListItem>
-                <ListItem>
-                  <ListItemText>Wins: { this.props.stats.playerWins }</ListItemText>
-                </ListItem>
-                <ListItem>
-                  <ListItemText>Busts: { this.props.stats.playerBusts }</ListItemText>
-                </ListItem>
-                <ListItem>
-                  <ListItemText>Black Jacks: { this.props.stats.playerBlackJacks }</ListItemText>
-                </ListItem>
-                <ListItem>
-                  <ListItemText className={ classes.name }>Dealer</ListItemText>
-                </ListItem>
-                <ListItem>
-                  <ListItemText>Wins: { this.props.stats.dealerWins }</ListItemText>
-                </ListItem>
-                <ListItem>
-                  <ListItemText>Busts: { this.props.stats.dealerBusts }</ListItemText>
-                </ListItem>
-                <ListItem>
-                  <ListItemText>Black Jacks: { this.props.stats.dealerBlackJacks }</ListItemText>
-                </ListItem>
-                <ListItem>
-                  <ListItemText className={ classes.name }>Ties: { this.props.stats.ties }</ListItemText>
-                </ListItem>
-              </List>
-            </ExpansionPanelDetails>
-          </ExpansionPanel>
-          <Divider />
-          <Typography className={ classes.title } variant='h6'>Current Totals</Typography>
-          <List>
-            <ListItem>
-              <ListItemText>Dealer: { this.props.dealerTotal }</ListItemText>
-            </ListItem>
-            <ListItem>
-              <ListItemText>Player: { this.props.playerTotal }</ListItemText>
-            </ListItem>
-          </List>
-          <Divider />
-          <Typography className={ classes.title } variant='h6'>Actions</Typography>
-          <List>
-            <ListItem button disabled={ this.props.playerHeld } onClick={ () => this.props.hit('player') }>
-              <ListItemText className={ classes.action }>Deal Card</ListItemText>
-            </ListItem>
-            <ListItem button disabled={ this.props.playerHeld } onClick={ () => this.props.hold('player') }>
-              <ListItemText className={ classes.action }>Hold</ListItemText>
-            </ListItem>
-            <ListItem button onClick={ () => this.props.changePage('Game')}>
-              <ListItemText className={ classes.action }>Reset Game</ListItemText>
-            </ListItem>
-          </List> 
-          <Divider />
-          <Typography className={ classes.title } variant='h6'>Game Messages</Typography>
-          <List>
-            { 
-              this.props.messages.map((message, index) => (
-                <ListItem key={ message + index }>
-                  <ListItemText primary={ message } />
-                </ListItem>
-              )) 
-            }
-          </List>     
-        </Drawer>
+        <div className={ classes.root }>
+          <Button className={ classes.button } variant='extendedFab' disabled={ this.props.playerHeld } onClick={ () => this.props.hit('player') }>Deal</Button>
+          <Button className={ classes.button } variant='extendedFab' disabled={ this.props.playerHeld } onClick={ () => this.props.hold('player') }>Hold</Button>
+          <Button className={ classes.button } variant='extendedFab' onClick={ () => this.props.changePage('Game') }>Restart</Button>
+          <Button className={ classes.button } variant='extendedFab' onClick={ () => this.props.changePage('Home') }>Return Home</Button>
+        </div>
     );
   }
-}
 
+}
 export default withStyles(styles)(ActionBar);

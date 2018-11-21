@@ -1,6 +1,10 @@
 import React, { Component } from 'react';
 import { withStyles } from '@material-ui/core/styles';
 
+//Get the path to Card_Simple_Suits_Blue 
+const cardBack = './images/cardbacks/Card_Simple_Suits_Blue.svg';
+
+//Set styles for Card component
 const styles = {
     root: {
         display: 'inline',
@@ -11,27 +15,30 @@ const styles = {
 }
 
 class Card extends Component {
-
-    state = {
-        cardBack: 'Simple Suits',
-    }
-
+    
     getCard = (style) => {
-        if(this.props.hide) {
-            return <img className = { style } src={ './images/cardbacks/Card_Simple_Suits_Blue.svg' } alt='Hidden Card' />
-        }
-
+        //If this card needs to be hidden, then use the cardBack image
+        if (this.props.hide) {
+            return <img className={ style } src={ cardBack } alt='Hidden Card' / >;
+        } 
+        //Otherwise, use the image for the card that was passed
         else {
-            return <img className = { style } src={ this.props.src } alt={ this.props.rank + " of " + this.props.suit }/>;
+            return <img className={ style } src={ this.props.src } alt={ this.props.rank + ' of ' + this.props.suit } />;
         }
     }
 
     render() {
         const { classes } = this.props;
 
-        return (
-            <div className = { classes.root }>
-                { this.getCard(classes.card) }
+        /**
+         * Uses an img to render a card based on the props passed in
+         * Hides the image by using the cardBack image if necessary
+         */
+        return ( 
+            <div className={ classes.root }> 
+                {
+                    this.getCard(classes.card)
+                } 
             </div>
         );
     }
