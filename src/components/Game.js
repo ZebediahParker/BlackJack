@@ -50,6 +50,7 @@ class Game extends Component {
             playerHold: false,
             dealerHold: false,
             gameOver: false,
+            cardsDealt: 0,
         }
     }
     
@@ -112,6 +113,7 @@ class Game extends Component {
             dealerTotal: 0,
             playerHold: false,
             dealerHold: false,
+            cardsDealt: 0,
         });
 
         this.props.changePage('Game');
@@ -126,14 +128,17 @@ class Game extends Component {
         let done = false;
 
         while (!done) {
+            //Checks if dealer's count is 17 or greater
             if (this.getTotal('dealer', false) >= 17) {
                 this.hold('dealer');
                 done = true;
             } 
+            //If the dealer's count is less than 17 they must hit
             else {
                 done = this.hit('dealer');
             }
         }
+        //After the dealer is done the game is over
         this.endGame();
     }
     
@@ -143,6 +148,7 @@ class Game extends Component {
      * If the dealer held, then ends the game
      */
     hold = (player) => {
+        //For either the player or dealer sets their status as holding
         if (player === 'player') {
             this.setState({ playerHold: true });
             this.state.gameMessages.push('You held');
@@ -161,8 +167,10 @@ class Game extends Component {
      * and then pushes the appropriate win/lose message, and ends game
      */
     hit = (player) => {
+        //Deals card to the given player
         this.dealCard(player);
         let wasBust = this.getTotal(player) > 21;
+        //If the player or dealer busted assigns the appropriate message and edits the stats accordingly
         if (wasBust) {
             if (player === 'player') {
                 this.state.gameMessages.push('You busted');
@@ -184,6 +192,8 @@ class Game extends Component {
      * Deals a random card to the given player
      */
     dealCard = (player) => {
+
+        //For either the player or dealer makes sure they have not held and then deals a random card
         if (player === 'player' && !this.state.playerHold) {
             let card = this.getRandomCard();
             if (card) {
@@ -211,8 +221,11 @@ class Game extends Component {
         let card;
 
         if (this.state.deck.length >= 0) {
+            //Gets random number between 0 and the length of the deck - 1
             let index = Math.floor(Math.random() * this.state.deck.length);
+            //Gets the random card using the index
             card = this.state.deck[index];
+            //Removes the card from the deck so that it cannot be dealt again
             this.state.deck.splice(index, 1);
         }
 
@@ -230,7 +243,7 @@ class Game extends Component {
     getTotal = (player, hideDealer = true) => {
         let isBust = false;
         let total = 0;
-        
+        //Gets total count of either player or dealer's hand
         if (player === 'player') {
             this.state.playerHand.forEach(card => {
                 total += this.getValue(card.rank);
@@ -242,6 +255,7 @@ class Game extends Component {
             });
         }
         
+        //If the count is over 21 then checks if they have Aces that can be counted as 1 instead of 11
         if (total > 21) {
             isBust = true;
             let done = false;
@@ -249,7 +263,8 @@ class Game extends Component {
 
             for (let i = 0; i < numberOfAces && !done; i++) {
                 total -= 10;
-
+                
+                //Rechecks so that only as many Aces as needed are counted as 1
                 if (total <= 21) {
                     done = true;
                     isBust = false;
@@ -257,22 +272,22 @@ class Game extends Component {
             }
         }
 
+        //Determines whether or not to include the dealer's hidden card value
         if (player === 'dealer') {
             let hiddenCard = 0;
 
             if (!isBust) {
                 let card = this.state.dealerHand[0];
+                //Ensures that the value stays hidden until necessary, so that the player cannot determine the value of the hidden card
                 if (card && card.rank !== 'Ace' && hideDealer && !this.state.gameOver) {
                     hiddenCard = this.getValue(card.rank);
                 }
             }
-
             return total - hiddenCard;
         } 
         else if (player === 'player') {
             return total;
         }
-
     }
     
     /**
@@ -283,18 +298,21 @@ class Game extends Component {
     getValue = (rank) => {
         let cardValue = 0;
 
+        //Checks if the rank is not a number
         if (isNaN(rank)) {
+            //If it's not a number and not an Ace then it's a face card with value of 10
             if (rank !== 'Ace') {
                 cardValue = 10;
             } 
+            //It is an Ace with value of 11
             else {
                 cardValue = 11;
             }
         } 
+        //It is a number and the value is parsed as an int
         else {
             cardValue = parseInt(rank);
         }
-
         return cardValue;
     }
     
@@ -306,6 +324,7 @@ class Game extends Component {
     getNumberOfAces = (player) => {
         let numberOfAces = 0;
 
+        //Counts the number of Aces for either the player or dealer
         if (player === 'player') {
             this.state.playerHand.forEach(card => {
                 if (card.rank === 'Ace') {
@@ -320,7 +339,6 @@ class Game extends Component {
                 }
             });
         }
-
         return numberOfAces;
     }
     

@@ -26,7 +26,7 @@ class ActionBar extends Component {
     const { classes } = this.props;
     return (
         <div className={ classes.root }>
-          <Button className={ classes.button } variant='extendedFab' disabled={ this.props.playerHeld } onClick={ () => this.props.hit('player') }>Deal</Button>
+          <Button className={ classes.button } variant='extendedFab' disabled={ this.props.playerHeld } onClick={ () => this.props.hit('player') }>Hit</Button>
           <Button className={ classes.button } variant='extendedFab' disabled={ this.props.playerHeld } onClick={ () => this.props.hold('player') }>Hold</Button>
           <Button className={ classes.button } variant='extendedFab' onClick={ () => this.props.changePage('Game') }>Restart</Button>
           <Button className={ classes.button } variant='extendedFab' onClick={ () => this.props.changePage('Home') }>Return Home</Button>
